@@ -1,5 +1,6 @@
 package de.arjmandi.navvistask.numberdatasource
 
+import de.arjmandi.navvistask.numberdatasource.domain.extensions.groupAndSort
 import de.arjmandi.navvistask.numberdatasource.domain.model.NumberResult
 import de.arjmandi.navvistask.numberdatasource.domain.parser.NumberParser
 import de.arjmandi.navvistask.numberdatasource.domain.repository.NumbersRepository
@@ -21,7 +22,7 @@ class NumberDataSource(
             }
 
             // Return the success result
-            NumberResult.Success(parsedNumbers)
+            NumberResult.Success(parsedNumbers.groupAndSort())
         } catch (e: Exception) {
             // Handle errors and return an error message
             NumberResult.Error("Failed to fetch numbers: ${e.message}")
