@@ -6,11 +6,11 @@ import de.arjmandi.navvistask.numberdatasource.di.dataSourceModule
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
 
-class App: Application() {
+class App : Application() {
     override fun onCreate() {
         super.onCreate()
 
-        startKoin{
+        startKoin {
             androidLogger()
             modules(listOf(appModule, dataSourceModule))
         }

@@ -11,9 +11,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class NumberViewModel(
-    private val numberDataSource: NumberDataSource
+    private val numberDataSource: NumberDataSource,
 ) : ViewModel() {
-
     private val _uiState = MutableStateFlow<UiState>(UiState.Loading)
     val uiState: StateFlow<UiState> = _uiState
 

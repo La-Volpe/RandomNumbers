@@ -18,27 +18,28 @@ import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
 import org.koin.dsl.module
 
-val dataSourceModule = module {
-    single<HttpClient> {
-        HttpClient(CIO) {
-            install(HttpTimeout) {
-                requestTimeoutMillis = 10_000
-                connectTimeoutMillis = 5_000
-                socketTimeoutMillis = 5_000
-            }
-            install(Logging) {
-                logger = Logger.ANDROID
-                level = LogLevel.BODY
+val dataSourceModule =
+    module {
+        single<HttpClient> {
+            HttpClient(CIO) {
+                install(HttpTimeout) {
+                    requestTimeoutMillis = 10_000
+                    connectTimeoutMillis = 5_000
+                    socketTimeoutMillis = 5_000
+                }
+                install(Logging) {
+                    logger = Logger.ANDROID
+                    level = LogLevel.BODY
+                }
             }
         }
+        single { ApiClient(get()) }
+        single<RandomSimulator> { RandomSimulatorImpl() }
+        single { NetworkSimulator(get()) }
+
+        single<NumbersRepository> { NumbersRepositoryImpl(get(), get()) }
+
+        single<NumberParser> { NumberParserImpl() }
+
+        single { NumberDataSource(get(), get()) }
     }
-    single { ApiClient(get()) }
-    single<RandomSimulator> { RandomSimulatorImpl() }
-    single { NetworkSimulator(get()) }
-
-    single<NumbersRepository> { NumbersRepositoryImpl(get(), get()) }
-
-    single<NumberParser> { NumberParserImpl() }
-
-    single { NumberDataSource(get(), get()) }
-}

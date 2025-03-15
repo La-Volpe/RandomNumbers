@@ -17,7 +17,7 @@ class NumberParserImpl : NumberParser {
         return ParsedNumber(
             sectionIndex = number and 0b11, // Extracting the two least significant bits
             itemValue = (number shr 2) and 0b11111, // Extracting bits 2-6
-            itemCheckmark = (number and 0b10000000) != 0 // Extracts the most significant bit
+            itemCheckmark = (number and 0b10000000) != 0, // Extracts the most significant bit
         )
     }
 }

@@ -6,5 +6,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class NumbersResponse(
     val numbers: List<Int>,
-    val error: NetworkError = NetworkError.None
+    val error: NetworkError = NetworkError.None,
 )

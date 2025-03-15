@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -37,9 +36,10 @@ fun NumberListScreen(viewModel: NumberViewModel) {
 
         is UiState.Success -> {
             Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(top = 16.dp)
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .padding(top = 16.dp),
             ) {
                 Button(onClick = { viewModel.refreshNumbers() }) {
                     Text("Get New Numbers")
@@ -66,7 +66,7 @@ fun NumberList(parsedNumbers: List<ParsedNumber>) {
 
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(16.dp)
+        contentPadding = PaddingValues(16.dp),
     ) {
         groupedNumbers.forEach { (sectionIndex, numbers) ->
             // Sort numbers by item value
@@ -77,7 +77,7 @@ fun NumberList(parsedNumbers: List<ParsedNumber>) {
                 Text(
                     text = "SECTION${sectionIndex + 1}",
                     style = MaterialTheme.typography.headlineSmall,
-                    modifier = Modifier.padding(vertical = 8.dp)
+                    modifier = Modifier.padding(vertical = 8.dp),
                 )
             }
 
@@ -92,11 +92,12 @@ fun NumberList(parsedNumbers: List<ParsedNumber>) {
 @Composable
 fun NumberItem(parsedNumber: ParsedNumber) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 4.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(vertical = 4.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(text = "Item${parsedNumber.itemValue + 1}")
 
@@ -104,7 +105,7 @@ fun NumberItem(parsedNumber: ParsedNumber) {
         Checkbox(
             checked = parsedNumber.itemCheckmark,
             onCheckedChange = null, // Disable interaction since the state is read-only
-            modifier = Modifier.padding(start = 8.dp)
+            modifier = Modifier.padding(start = 8.dp),
         )
     }
 }

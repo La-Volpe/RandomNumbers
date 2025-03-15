@@ -6,9 +6,9 @@ import kotlinx.coroutines.delay
 import kotlinx.io.IOException
 import kotlinx.serialization.SerializationException
 
-class NetworkSimulator(private val random: RandomSimulator) {
-
-
+class NetworkSimulator(
+    private val random: RandomSimulator,
+) {
     suspend fun simulateNetworkResponse(mode: NetworkMode): NetworkResponse {
         delay(random.randomDelay())
 

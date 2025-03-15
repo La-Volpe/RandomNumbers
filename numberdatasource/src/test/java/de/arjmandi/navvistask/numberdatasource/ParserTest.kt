@@ -21,12 +21,12 @@ class NumberParserTest {
         every { parser.isValidNumber(256) } returns false
 
         // Valid numbers
-        assertTrue(parser.isValidNumber(0))     // Minimum valid number
-        assertTrue(parser.isValidNumber(255))   // Maximum valid number
+        assertTrue(parser.isValidNumber(0)) // Minimum valid number
+        assertTrue(parser.isValidNumber(255)) // Maximum valid number
 
         // Invalid numbers
-        assertFalse(parser.isValidNumber(-1))   // Below range
-        assertFalse(parser.isValidNumber(256))  // Above range
+        assertFalse(parser.isValidNumber(-1)) // Below range
+        assertFalse(parser.isValidNumber(256)) // Above range
     }
 
     @Test
@@ -43,31 +43,31 @@ class NumberParserTest {
         // Test valid inputs
         assertEquals(
             ParsedNumber(sectionIndex = 0, itemValue = 0, itemCheckmark = false),
-            parser.parseNumber(0) // 0b00000000
+            parser.parseNumber(0), // 0b00000000
         )
         assertEquals(
             ParsedNumber(sectionIndex = 0, itemValue = 3, itemCheckmark = true),
-            parser.parseNumber(140) // 0b10001100
+            parser.parseNumber(140), // 0b10001100
         )
         assertEquals(
             ParsedNumber(sectionIndex = 2, itemValue = 7, itemCheckmark = false),
-            parser.parseNumber(30) // 0b00011110
+            parser.parseNumber(30), // 0b00011110
         )
         assertEquals(
             ParsedNumber(sectionIndex = 1, itemValue = 10, itemCheckmark = false),
-            parser.parseNumber(41) // 0b00101001
+            parser.parseNumber(41), // 0b00101001
         )
         assertEquals(
             ParsedNumber(sectionIndex = 3, itemValue = 15, itemCheckmark = true),
-            parser.parseNumber(191) // 0b10111111
+            parser.parseNumber(191), // 0b10111111
         )
         assertEquals(
             ParsedNumber(sectionIndex = 3, itemValue = 16, itemCheckmark = false),
-            parser.parseNumber(67) // 0b01000011
+            parser.parseNumber(67), // 0b01000011
         )
         assertEquals(
             ParsedNumber(sectionIndex = 3, itemValue = 31, itemCheckmark = true),
-            parser.parseNumber(255) // 0b11111111
+            parser.parseNumber(255), // 0b11111111
         )
     }
 

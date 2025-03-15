@@ -9,10 +9,9 @@ import de.arjmandi.navvistask.numberdatasource.domain.repository.NumbersReposito
 
 class NumbersRepositoryImpl(
     private val apiClient: ApiClient,
-    private val networkSimulator: NetworkSimulator
+    private val networkSimulator: NetworkSimulator,
+    val fallbackNetworkMode: NetworkMode = NetworkMode.FLAKY,
 ) : NumbersRepository {
-    val fallbackNetworkMode = NetworkMode.STABLE
-
     override suspend fun fetchNumbers(): NumbersResponse {
         val response = apiClient.fetchNumbers()
         return when (response.error) {
