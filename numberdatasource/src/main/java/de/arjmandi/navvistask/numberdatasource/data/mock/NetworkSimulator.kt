@@ -1,17 +1,16 @@
 package de.arjmandi.navvistask.numberdatasource.data.mock
 
+import de.arjmandi.navvistask.numberdatasource.domain.mock.RandomSimulator
 import io.ktor.client.plugins.ConnectTimeoutException
 import kotlinx.coroutines.delay
 import kotlinx.io.IOException
 import kotlinx.serialization.SerializationException
-import kotlin.random.Random
 
-class NetworkSimulator {
+class NetworkSimulator(private val random: RandomSimulator) {
 
-    private val random = Random
 
     suspend fun simulateNetworkResponse(mode: NetworkMode): NetworkResponse {
-        delay(random.nextLong(100, 1500)) // Simulated delay (100ms to 1.5s)
+        delay(random.randomDelay())
 
         return when (mode) {
             NetworkMode.STABLE -> {
@@ -19,27 +18,30 @@ class NetworkSimulator {
                 NetworkResponse.StableConnection(numbers)
             }
             NetworkMode.STABLE_WITH_MALFORMED -> {
-                if (random.nextBoolean()) {
-                    // 50% chance to return a valid response
+                if (random.randomBoolean()) {
+                    // 50% chance to return a "valid" response. (i.e: all integer numbers)
                     val numbers = generateRandomNumbers(includeInvalidNumbers = true)
                     NetworkResponse.StableConnectionWithMalformedResponse(numbers)
                 } else {
-                    // 50% chance to return a JSON parsing error
+                    NetworkResponse.StableConnectionWithMalformedResponse(emptyList())
+                    // 50% chance to return a JSON parsing error (i.e: an string in the middle of the response json)
                     throw SerializationException("Malformed JSON received")
                 }
             }
             NetworkMode.FLAKY -> {
-                if (random.nextBoolean()) {
+                if (random.randomBoolean()) {
                     // 50% chance of a network timeout
                     delay(3000)
+                    NetworkResponse.FlakyConnection("")
                     throw ConnectTimeoutException("Connection Timeout", 3000)
                 } else {
                     // 50% chance of an incomplete response
                     NetworkResponse.FlakyConnection("""{"numbers": [""")
+                    throw SerializationException("Likely incomplete json.")
                 }
             }
             NetworkMode.NO_CONNECTION -> {
-                if (random.nextBoolean()) {
+                if (random.randomBoolean()) {
                     // 50% chance of an actual offline scenario
                     throw IOException("Simulated network failure")
                 } else {
@@ -51,20 +53,13 @@ class NetworkSimulator {
     }
 
     private fun generateRandomNumbers(includeInvalidNumbers: Boolean): List<Int> {
-        val size = random.nextInt(1, 20)
+        val size = random.randomListLength()
         return List(size) {
-            if (includeInvalidNumbers && random.nextBoolean()) {
-                random.nextInt(-100, 356)
+            if (includeInvalidNumbers && random.randomBoolean()) {
+                random.randomInvalidNumber()
             } else {
-                random.nextInt(0, 256)
+                random.randomValidNumber()
             }
         }
     }
-}
-
-/**
- * Represents the mode of the network simulation.
- */
-enum class NetworkMode {
-    STABLE, STABLE_WITH_MALFORMED, NO_CONNECTION, FLAKY
 }

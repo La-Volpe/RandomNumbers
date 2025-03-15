@@ -11,7 +11,11 @@ sealed class NetworkResponse {
     fun toNumbersResponse(): NumbersResponse {
         return when (this) {
             is StableConnection -> NumbersResponse(numbers)
-            is StableConnectionWithMalformedResponse -> NumbersResponse(numbers)
+            is StableConnectionWithMalformedResponse -> {
+                if(numbers.isNotEmpty())
+                    NumbersResponse(numbers)
+                else NumbersResponse(emptyList(), error = NetworkError.MalformedResponse())
+            }
             is FlakyConnection -> NumbersResponse(emptyList(), error = NetworkError.FlakyResponse())
             is NoConnection -> NumbersResponse(emptyList(), error = NetworkError.NoConnection())
         }

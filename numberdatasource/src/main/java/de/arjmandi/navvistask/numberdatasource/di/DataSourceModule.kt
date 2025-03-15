@@ -2,8 +2,10 @@ package de.arjmandi.navvistask.numberdatasource.di
 
 import de.arjmandi.navvistask.numberdatasource.NumberDataSource
 import de.arjmandi.navvistask.numberdatasource.data.mock.NetworkSimulator
+import de.arjmandi.navvistask.numberdatasource.data.mock.RandomSimulatorImpl
 import de.arjmandi.navvistask.numberdatasource.data.remote.ApiClient
 import de.arjmandi.navvistask.numberdatasource.data.repository.NumbersRepositoryImpl
+import de.arjmandi.navvistask.numberdatasource.domain.mock.RandomSimulator
 import de.arjmandi.navvistask.numberdatasource.domain.parser.NumberParser
 import de.arjmandi.navvistask.numberdatasource.domain.repository.NumbersRepository
 import de.arjmandi.navvistask.numberdatasource.parser.NumberParserImpl
@@ -31,7 +33,8 @@ val dataSourceModule = module {
         }
     }
     single { ApiClient(get()) }
-    single { NetworkSimulator() }
+    single<RandomSimulator> { RandomSimulatorImpl() }
+    single { NetworkSimulator(get()) }
 
     single<NumbersRepository> { NumbersRepositoryImpl(get(), get()) }
 
