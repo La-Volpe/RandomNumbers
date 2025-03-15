@@ -4,11 +4,11 @@ import de.arjmandi.navvistask.numberdatasource.domain.model.NumbersResponse
 
 sealed class NetworkResponse {
     data class StableConnection(
-        val numbers: List<Int>,
+        val numbers: List<Any>,
     ) : NetworkResponse()
 
     data class StableConnectionWithMalformedResponse(
-        val numbers: List<Int>,
+        val numbers: List<Any>,
     ) : NetworkResponse()
 
     data class FlakyConnection(
@@ -16,20 +16,22 @@ sealed class NetworkResponse {
     ) : NetworkResponse()
 
     data class NoConnection(
-        val connectionError: List<Int>,
+        val connectionError: List<Any>,
     ) : NetworkResponse()
 
     fun toNumbersResponse(): NumbersResponse =
         when (this) {
-            is StableConnection -> NumbersResponse(numbers)
+            is StableConnection -> {
+                NumbersResponse(numbers.filterIsInstance<Int>())
+            }
             is StableConnectionWithMalformedResponse -> {
                 if (numbers.isNotEmpty()) {
-                    NumbersResponse(numbers)
+                    NumbersResponse(numbers.filterIsInstance<Int>())
                 } else {
-                    NumbersResponse(emptyList(), error = NetworkError.MalformedResponse())
+                    NumbersResponse(emptyList<Int>(), error = NetworkError.MalformedResponse())
                 }
             }
-            is FlakyConnection -> NumbersResponse(emptyList(), error = NetworkError.FlakyResponse())
-            is NoConnection -> NumbersResponse(emptyList(), error = NetworkError.NoConnection())
+            is FlakyConnection -> NumbersResponse(emptyList<Int>(), error = NetworkError.FlakyResponse())
+            is NoConnection -> NumbersResponse(emptyList<Int>(), error = NetworkError.NoConnection())
         }
 }

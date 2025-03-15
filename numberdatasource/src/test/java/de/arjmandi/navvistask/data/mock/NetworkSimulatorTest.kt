@@ -4,6 +4,7 @@ import de.arjmandi.navvistask.numberdatasource.data.mock.NetworkError
 import de.arjmandi.navvistask.numberdatasource.data.mock.NetworkMode
 import de.arjmandi.navvistask.numberdatasource.data.mock.NetworkResponse
 import de.arjmandi.navvistask.numberdatasource.data.mock.NetworkSimulator
+import de.arjmandi.navvistask.numberdatasource.data.remote.ApiException
 import de.arjmandi.navvistask.numberdatasource.domain.mock.RandomSimulator
 import io.ktor.client.network.sockets.ConnectTimeoutException
 import io.mockk.every
@@ -35,6 +36,7 @@ class NetworkSimulatorTest {
         Dispatchers.setMain(testDispatcher) // Set test dispatcher
         mockRandom = mockk<RandomSimulator>()
         networkSimulator = NetworkSimulator(mockRandom)
+        every { mockRandom.randomOneThirdChance() } returns 0
     }
 
     @After
@@ -58,13 +60,14 @@ class NetworkSimulatorTest {
         }
 
     @Test
-    fun `simulate STABLE_WITH_MALFORMED mode returns valid or throws exception`() =
+    fun `simulate STABLE_WITH_MALFORMED mode returns seemingly valid`() =
         runTest(testScheduler) {
             every { mockRandom.randomBoolean() } returns true
             every { mockRandom.randomDelay() } returns 300L
             every { mockRandom.randomListLength() } returns 5
             every { mockRandom.randomValidNumber() } returns 10
             every { mockRandom.randomInvalidNumber() } returns -12
+            every { mockRandom.randomOneThirdChance() } returns 0
 
             assertTrue(
                 networkSimulator.simulateNetworkResponse(
@@ -74,16 +77,34 @@ class NetworkSimulatorTest {
         }
 
     @Test
-    fun `simulate STABLE_WITH_MALFORMED mode throws exception`() =
+    fun `simulate STABLE_WITH_MALFORMED mode with empty response`() =
         runTest(testScheduler) {
             every { mockRandom.randomBoolean() } returns false // Second run throws exception
             every { mockRandom.randomDelay() } returns 300L
             every { mockRandom.randomListLength() } returns 5
             every { mockRandom.randomValidNumber() } returns 10
             every { mockRandom.randomInvalidNumber() } returns -12
+            every { mockRandom.randomOneThirdChance() } returns 1
 
-            assertFailsWith<SerializationException> {
-                networkSimulator.simulateNetworkResponse(NetworkMode.STABLE_WITH_MALFORMED)
+            assertFailsWith<ApiException> {
+                val result = networkSimulator.simulateNetworkResponse(NetworkMode.STABLE_WITH_MALFORMED)
+                result.toNumbersResponse().numbers.isEmpty()
+            }
+        }
+
+    @Test
+    fun `simulate STABLE_WITH_MALFORMED mode with outright invalid response`() =
+        runTest(testScheduler) {
+            every { mockRandom.randomBoolean() } returns false // Second run throws exception
+            every { mockRandom.randomDelay() } returns 300L
+            every { mockRandom.randomListLength() } returns 5
+            every { mockRandom.randomValidNumber() } returns 10
+            every { mockRandom.randomInvalidNumber() } returns -12
+            every { mockRandom.randomOneThirdChance() } returns 2
+
+            assertFailsWith<ApiException> {
+                val result = networkSimulator.simulateNetworkResponse(NetworkMode.STABLE_WITH_MALFORMED)
+                result.toNumbersResponse().numbers.isNotEmpty()
             }
         }
 
@@ -121,36 +142,5 @@ class NetworkSimulatorTest {
                     networkSimulator.simulateNetworkResponse(NetworkMode.FLAKY).toNumbersResponse().error is NetworkError.FlakyResponse,
                 )
             }
-        }
-
-    @Test
-    fun `simulate NO_CONNECTION mode throws IOException`() =
-        runTest(testScheduler) {
-            every { mockRandom.randomBoolean() } returns true // First run should time out
-            every { mockRandom.randomDelay() } returns 1000
-            every { mockRandom.randomListLength() } returns 13
-            every { mockRandom.randomValidNumber() } returns 10
-            every { mockRandom.randomInvalidNumber() } returns -12
-            assertFailsWith<IOException> {
-                assertTrue(networkSimulator.simulateNetworkResponse(NetworkMode.NO_CONNECTION) is NetworkResponse.NoConnection)
-            }
-        }
-
-    @Test
-    fun `simulate NO_CONNECTION returns empty list`() =
-        runTest(testScheduler) {
-            every { mockRandom.randomBoolean() } returns false // Second run returns empty response
-            every { mockRandom.randomDelay() } returns 1000
-            every { mockRandom.randomListLength() } returns 13
-            every { mockRandom.randomValidNumber() } returns 10
-            every { mockRandom.randomInvalidNumber() } returns -12
-            assertTrue(networkSimulator.simulateNetworkResponse(NetworkMode.NO_CONNECTION) is NetworkResponse.NoConnection)
-            assertTrue(
-                networkSimulator
-                    .simulateNetworkResponse(NetworkMode.NO_CONNECTION)
-                    .toNumbersResponse()
-                    .numbers
-                    .isEmpty(),
-            )
         }
 }

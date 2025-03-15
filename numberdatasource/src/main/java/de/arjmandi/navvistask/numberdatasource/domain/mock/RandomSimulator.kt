@@ -10,4 +10,6 @@ interface RandomSimulator {
     fun randomValidNumber(): Int
 
     fun randomInvalidNumber(): Int
+
+    fun randomOneThirdChance(): Int
 }

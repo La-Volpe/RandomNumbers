@@ -1,6 +1,8 @@
 package de.arjmandi.navvistask.numberdatasource.data.mock
 
+import de.arjmandi.navvistask.numberdatasource.data.remote.ApiException
 import de.arjmandi.navvistask.numberdatasource.domain.mock.RandomSimulator
+import de.arjmandi.navvistask.numberdatasource.domain.model.ParsedNumber
 import io.ktor.client.plugins.ConnectTimeoutException
 import kotlinx.coroutines.delay
 import kotlinx.io.IOException
@@ -18,14 +20,25 @@ class NetworkSimulator(
                 NetworkResponse.StableConnection(numbers)
             }
             NetworkMode.STABLE_WITH_MALFORMED -> {
-                if (random.randomBoolean()) {
-                    // 50% chance to return a "valid" response. (i.e: all integer numbers)
-                    val numbers = generateRandomNumbers(includeInvalidNumbers = true)
-                    NetworkResponse.StableConnectionWithMalformedResponse(numbers)
-                } else {
-                    NetworkResponse.StableConnectionWithMalformedResponse(emptyList())
-                    // 50% chance to return a JSON parsing error (i.e: an string in the middle of the response json)
-                    throw SerializationException("Malformed JSON received")
+                when(random.randomOneThirdChance()){
+                    0 -> {
+                        // 33.33% chance to return a "valid" response. (i.e: all integer numbers)
+                        val numbers = generateRandomNumbers(includeInvalidNumbers = true)
+                        NetworkResponse.StableConnectionWithMalformedResponse(numbers)
+                    }
+                    1 -> {
+                        //33.33% chance to return an empty response (i.e: a backend error)
+                        NetworkError.MalformedResponse("")
+                        NetworkResponse.StableConnectionWithMalformedResponse(emptyList<Int>())
+                        throw ApiException("An empty response was retrieved!")
+                    }
+                    else -> {
+                        //33.33% chance to return an outright invalid response. (i.e: an string in the middle of integer numbers)
+                        val numbers = generateRandomNumbers(includeInvalidNumbers = true)
+                        val responseList = listOf("HSV", "FCB", 2, true)
+                        NetworkResponse.StableConnectionWithMalformedResponse(numbers.plus(responseList))
+                        throw ApiException("Illegal items in the retrieved list!")
+                    }
                 }
             }
             NetworkMode.FLAKY -> {
@@ -41,13 +54,8 @@ class NetworkSimulator(
                 }
             }
             NetworkMode.NO_CONNECTION -> {
-                if (random.randomBoolean()) {
-                    // 50% chance of an actual offline scenario
-                    throw IOException("Simulated network failure")
-                } else {
-                    // 50% chance of an empty response
-                    NetworkResponse.NoConnection(emptyList())
-                }
+                NetworkResponse.NoConnection(emptyList())
+                throw IOException("Simulated network failure")
             }
         }
     }

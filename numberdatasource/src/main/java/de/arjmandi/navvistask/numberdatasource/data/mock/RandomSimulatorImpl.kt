@@ -13,4 +13,6 @@ class RandomSimulatorImpl : RandomSimulator {
     override fun randomValidNumber(): Int = Random.nextInt(0, 256)
 
     override fun randomInvalidNumber(): Int = Random.nextInt(-100, 356)
+
+    override fun randomOneThirdChance(): Int = Random.nextInt(3)
 }
