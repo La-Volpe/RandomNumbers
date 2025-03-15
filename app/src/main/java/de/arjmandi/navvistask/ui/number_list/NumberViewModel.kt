@@ -36,6 +36,10 @@ class NumberViewModel(
         }
     }
 
+    fun refreshNumbers() {
+        fetchNumbers()
+    }
+
     companion object {
         const val TAG = "NumberViewModel"
     }

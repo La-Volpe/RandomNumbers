@@ -4,7 +4,10 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import de.arjmandi.navvistask.ui.number_list.NumberListScreen
@@ -20,11 +23,12 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             NavvisTaskTheme {
-                Surface(
+                Scaffold(
                     modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    NumberListScreen(viewModel = viewModel)
+                ) { innerPadding ->
+                    Surface(modifier = Modifier.padding(innerPadding)) {
+                        NumberListScreen(viewModel = viewModel)
+                    }
                 }
             }
         }
