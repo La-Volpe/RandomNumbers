@@ -1,5 +1,6 @@
 package de.arjmandi.navvistask.numberdatasource
 
+import de.arjmandi.navvistask.numberdatasource.data.mock.NetworkMode
 import de.arjmandi.navvistask.numberdatasource.domain.extensions.groupAndSort
 import de.arjmandi.navvistask.numberdatasource.domain.model.NumberResult
 import de.arjmandi.navvistask.numberdatasource.domain.parser.NumberParser
@@ -11,8 +12,9 @@ class NumberDataSource(
     private val repository: NumbersRepository,
     private val numberParser: NumberParser,
 ) {
-    suspend fun fetchParsedNumbers(): NumberResult =
+    suspend fun fetchParsedNumbers(fallbackMode: NetworkMode = NetworkMode.STABLE): NumberResult =
         try {
+            repository.setFallbackMode(fallbackMode)
             // Fetch the raw numbers from the repository
             val response = repository.fetchNumbers()
 
