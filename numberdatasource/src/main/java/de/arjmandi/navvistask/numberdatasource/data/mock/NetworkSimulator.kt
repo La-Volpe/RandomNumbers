@@ -68,12 +68,3 @@ class NetworkSimulator {
 enum class NetworkMode {
     STABLE, STABLE_WITH_MALFORMED, NO_CONNECTION, FLAKY
 }
-
-sealed class NetworkError {
-    object None : NetworkError()
-    data class Timeout(val message: String = "Request timed out") : NetworkError()
-    data class NoConnection(val message: String = "No internet connection") : NetworkError()
-    data class MalformedResponse(val message: String = "Malformed JSON received") : NetworkError()
-    data class FlakyResponse(val message: String = "Flaky network connection") : NetworkError()
-    data class UnknownError(val message: String) : NetworkError()
-}
