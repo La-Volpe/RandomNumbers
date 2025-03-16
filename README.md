@@ -49,40 +49,16 @@ This is an Android application built using **Kotlin**, **Jetpack Compose**, and 
   - Network Simulation (`NetworkSimulator.kt`)
 
 # Implementation Details
-## Summary
-This implementation prioritizes **modularity, efficiency, and testability**. By leveraging **Kotlin-first libraries**, **bitwise operations for parsing**, and **network simulation**, we ensure a robust and maintainable Android solution.
-### Project Structure
-```
-NavvisTask/
-│── app/                      # Main Application Module
-│   ├── src/main/java/de/arjmandi/navvistask/
-│   │   ├── ui/               # UI Screens & Components
-│   │   ├── di/               # Dependency Injection Modules
-│   │   ├── App.kt            # Application Entry Point
-│   │   ├── MainActivity.kt   # Main Activity
-│   │   ├── UiState.kt        # UI State Management
-│
-│── numberdatasource/         # Data Handling Module
-│   ├── src/main/java/de/arjmandi/navvistask/numberdatasource/
-│   │   ├── data/
-│   │   │   ├── repository/   # Repository Implementation
-│   │   │   ├── remote/       # API Client with Ktor
-│   │   │   ├── mock/         # Network Simulator
-│   │   ├── domain/
-│   │   │   ├── model/        # Data Models
-│   │   │   ├── repository/   # Repository Interface
-│   │   │   ├── parser/       # Parsing Logic
-│   │   ├── di/               # Dependency Injection (Koin)
-```
 
-## 1. Tech Stack
+## 1. Choice of Libraries and Tools
 This project is built using **Kotlin-first libraries** that are lightweight and easy to use, ensuring modern and efficient Android development:
 
 ### **Ktor (Networking)**
-- **Ktor is a Kotlin-native HTTP client** designed with coroutines in mind.
+- Retrofit is great, but it's not 2014 anymore. (Sorry Jake Wharton!)
+- Unlike Retrofit, **Ktor is a Kotlin-native HTTP client** designed with coroutines in mind.
 - Lightweight and flexible, allowing smooth error handling and response parsing.
 - **Built-in coroutine support** ensures non-blocking network calls.
-- Retrofit is great! But it's not 2014 anymore. (sorry, Jake Wharton)
+- Less boilerplate compared to Retrofit.
 
 ### **Koin (Dependency Injection)**
 - A simple, Kotlin-first DI framework without reflection.
@@ -101,7 +77,7 @@ This project is built using **Kotlin-first libraries** that are lightweight and 
 ## 2. Why Modularizing `NumberDataSource`?
 The `NumberDataSource` module is kept separate for:
 
-- **Reusability**: This module can be used in other projects, such as a backend service or another Android app.
+- **Reusability**: This module can be used in other projects, such as a different module in the same app, a backend service or another Android app.
 - **Scalability**: If the parsing logic needs to be changed or extended (e.g., support different APIs), we can do so without affecting the main app.
 - **Testing**: The parsing and network logic can be **independently tested** without UI dependencies.
 
@@ -111,11 +87,11 @@ The module provides:
 2. A **parser** that converts raw JSON numbers into structured data.
 3. A **network simulator** to handle different network conditions.
 
-
 ## 3. Logic Behind `NumberParser`
 The task required extracting meaningful values from numbers in a JSON array. We implemented the parsing logic using **bitwise operations**:
 
 ### **Steps:**
+
 Each number (0-255) is processed as follows:
 
 1. **Extract Section Index** → Last 2 bits (`number & 0b11`) → Determines `SECTION1` to `SECTION4`.
@@ -129,7 +105,7 @@ This approach ensures:
 - **Scalability** (can extend mapping rules if needed).
 
 ## 4. Logic of `NetworkSimulator`
-Since the real API was unavailable, I created a **mock network simulator** to test different conditions:
+Since the real API was unavailable, we created a **mock network simulator** to test different conditions:
 
 ### **Network Modes:**
 1. **Stable** → Returns a normal response with valid numbers.
@@ -164,14 +140,29 @@ App Module (UI + ViewModel)
 4. ViewModel updates the **UI state**, triggering Jetpack Compose.
 
 This architecture ensures:
-
 - **Loose coupling** between UI, data, and networking layers.
 - **Easy unit testing** for each component.
-- **Scalability** for adding features (e.g., offline caching with Room, reading data from a new source, etc.).
+- **Scalability** for adding features (e.g., offline caching with Room).
+
+## 6. Trade-offs and Considerations
+This project was developed in **10-12 hours**, and naturally, some trade-offs had to be made. My guiding principles are:
+
+1. **"Perfect" is the enemy of "good"** – Delivering something functional within constraints is better than endlessly optimizing.
+2. **Make it work, then make it better** – Prioritize a working solution before refining it.
+3. **Time is linear and continuous** – A solution must fit within the available time.
+
+### **Key Trade-offs:**
+- **Focused testing on core logic**: I wrote tests only for `NumberParser` and `NetworkSimulator`, as they are the backbone of the app. Ideally, the UI, repository, and other classes should have tests too.
+- **No NDK implementation (yet)**: I considered implementing the `NumberDataSource` in **C++ with NDK**, but refreshing my knowledge on JNI would take time. However, the current design allows easy reuse in a **JVM backend** environment.
+- **Long `NumberListScreen.kt` file**: The composables inside it could be moved into separate files for better modularity. It's not terrible, but it could be improved.
+- **More abstraction would improve maintainability**: Given more time, I would add even more abstraction layers to keep the codebase even cleaner.
+- **ViewModel dependency concerns**: In my own projects, I never make a **direct call** to another class from a ViewModel. This anti-pattern makes refactoring and testing harder. Instead, I'd introduce a `NumberContext` or `NumberMiddleware` class that acts as a **delegate** between the ViewModel and data sources. A similar approach would also apply to `NumberDataSource` and `NetworkSimulator`, keeping dependencies more manageable.
+
+## Summary
+This implementation prioritizes **modularity, efficiency, and testability**. By leveraging **Kotlin-first libraries**, **bitwise operations for parsing**, and **network simulation**, we ensure a robust and maintainable Android solution. Trade-offs were made to deliver the best possible result within the given time constraints while keeping future improvements in mind.
 
 ---
 
-
 ### Author: **Javad Arjmandi**
-📧 Contact: javad@arjmandi.de
+📧 Contact: [javad@arjmandi.de](mailto:javad@arjmandi.me)
 
