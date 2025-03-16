@@ -1,5 +1,33 @@
 # NavVis Android Code Challenge
 
+# Table of Contents
+
+- [NavVis Android Code Challenge](#navvis-android-code-challenge)
+  - [Overview](#overview)
+  - [Features](#features)
+  - [Installation & Setup](#installation--setup)
+  - [Usage](#usage)
+  - [Testing](#testing)
+- [Implementation Details](#implementation-details)
+  - [Choice of Libraries and Tools](#1-choice-of-libraries-and-tools)
+    - [ktor-networking](#ktor-networking)
+    - [koin-dependency-injection](#koin-dependency-injection)
+    - [mockk-unit-testing](#mockk-unit-testing)
+    - [coroutines-async-processing](#coroutines-async-processing)
+  - [Why Modularizing NumberDataSource](#2-why-modularizing-numberdatasource)
+  - [Logic Behind NumberParser](#3-logic-behind-numberparser)
+    - [Steps](#steps)
+  - [Logic of NetworkSimulator](#4-logic-of-networksimulator)
+    - [Network Modes](#network-modes)
+    - [How It Works](#how-it-works)
+  - [Overall Architecture](#5-Overall-architecture)
+    - [Layered Structure](#layered-structure)
+    - [Data Flow](#data-flow)
+  - [Trade-offs and Considerations](#6-trade-offs-and-considerations)
+    - [Key Trade-offs](#key-trade-offs)
+  - [Summary](#summary)
+  - [Author](#author-javad-arjmandi)
+
 ## Overview
 This is an Android application built using **Kotlin**, **Jetpack Compose**, and **Ktor** for networking. The app retrieves a JSON response containing numbers, processes them into structured items with checkboxes, and displays them in a categorized list view.
 
