@@ -162,6 +162,7 @@ fun ConnectionDropdownMenu(networkMode: NetworkMode, onItemSelected: (networkMod
                     onClick = {
                         selectedOption = option
                         onItemSelected(option)
+                        expanded = false
                     }
                 )
             }
