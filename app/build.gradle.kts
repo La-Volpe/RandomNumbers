@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "de.arjmandi.navvistask"
+    namespace = "de.arjmandi.random_numbers"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "de.arjmandi.navvistask"
+        applicationId = "de.arjmandi.random_numbers"
         minSdk = 24
         targetSdk = 35
         versionCode = 1

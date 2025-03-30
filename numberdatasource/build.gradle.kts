@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "de.arjmandi.navvistask.numberdatasource"
+    namespace = "de.arjmandi.random_numbers.numberdatasource"
     compileSdk = 35
 
     defaultConfig {

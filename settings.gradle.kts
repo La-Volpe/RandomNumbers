@@ -19,6 +19,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Navvis Task"
+rootProject.name = "Random Numbers"
 include(":app")
 include(":numberdatasource")
