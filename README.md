@@ -1,5 +1,5 @@
 # Sample Android Code Challenge
-
+This is a hypothetical take-home assignment. For full problem definition [see the issue](https://github.com/La-Volpe/RandomNumbers/issues/1).
 # Table of Contents
 
 - [Sample Android Code Challenge](#sample-android-code-challenge)
